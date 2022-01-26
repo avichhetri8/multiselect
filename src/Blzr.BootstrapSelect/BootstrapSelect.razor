@@ -22,8 +22,32 @@
         </div>
     </button>
     <div class="dropdown-menu @(isActive? "show" : "")" role="combobox" tabindex="-1">
+
+        @if (DisplaySearch)
+        {
+            <div class="bs-searchbox">
+                <input type="text" class="form-control" autocomplete="off" role="textbox" aria-label="Search" placeholder="@Defaults.SearchPlaceholderText" @oninput="PerformSearch">
+            </div>
+        }
         <div class="inner show" role="listbox" tabindex="-1" id="@innerId" @attributes="ConditionalAriaAttributes">
             <ul class="dropdown-menu inner show">
+                <li>
+                    @{var totalSelected = 0; bool allSelected = false; }
+                    @foreach(var item in FilteredOptions)
+                    {
+                        totalSelected += item.Selected ? 1 : 0;
+                    }
+                    @{ allSelected= totalSelected == FilteredOptions.Count() ? true : false;}
+                    <a  role="option" class="dropdown-item " aria-disabled="false" tabindex="0" aria-selected="" @onclick="SelectAll">
+                        @if (IsMultiple || ShowTick.Value)
+                        {
+                            <span class="fa bs-ok-default check-mark"></span>
+                        }
+                       <input type="checkbox" @bind="allSelected"/>
+                       <span class="text">Select All</span>
+                    </a>
+                </li>
+
                 @{ var currentOptGroup = ""; var firstTime = true; }
                 @foreach (var item in FilteredOptions)
                 {
