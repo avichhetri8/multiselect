@@ -1,0 +1,69 @@
+﻿
+@inject HttpClient Http
+
+<h1>Blzr.BootstrapSelect</h1>
+
+@if (countries == null)
+{
+<div class="triple-spinner">
+</div>
+}
+else
+{
+    <h2>Basic</h2>
+    <BootstrapSelect Id="basic" TItem="Country" Data="@countries" TextField="@((item) => item.Name)" ValueField="@((item) => item.Id.ToString())"
+                     TType="string" Label="Single" />
+    
+    <CodeSnippet Language="HTML">
+&lt;BootstrapSelect TItem="Country"
+                 Data="@@countries"
+                 TextField="@@((item) => item.Name)"
+                 ValueField="@@((item) => item.Id.ToString())"
+                 TType="string" /&gt;
+    </CodeSnippet>
+
+    <BootstrapSelect Id="basic" TItem="Country" Data="@countries.OrderBy(x => x.Region)" TextField="@((item) => item.Name)" ValueField="@((item) => item.Id.ToString())"
+                     OptGroupField="@((item) => item.Region)" TType="string" Label="Basic With Opt Groups" />
+
+    <p>If supplying <code>OptGroupField="@@((item) => item.Region)"</code> then is assumed that the <code>Data</code> value has been sorted correctly to group all the opt groups together</p>
+
+    <CodeSnippet Language="HTML">
+&lt;BootstrapSelect TItem="Country"
+                 Data="@@countries.OrderBy(x => x.Region)"
+                 TextField="@@((item) => item.Name)"
+                 ValueField="@@((item) => item.Id.ToString())"
+                 OptGroupField="@@((item) => item.Region)"
+                 TType="string" /&gt;
+    </CodeSnippet>
+
+    <BootstrapSelect Id="multi-basic" TItem="Country" Data="@countries" TextField="@((item) => item.Name)" ValueField="@((item) => item.Id.ToString())"
+                     TType="IEnumerable<int>" IsMultiple="true" Label="Muti" />
+
+    <CodeSnippet Language="HTML">
+&lt;BootstrapSelect TItem="Country"
+                 Data="@@countries"
+                 TextField="@@((item) => item.Name)"
+                 ValueField="@@((item) => item.Id.ToString())"
+                 IsMultiple="true"
+                 TType="string" /&gt;
+    </CodeSnippet>
+
+    <BootstrapSelect Id="basic" TItem="Country" Data="@countries" TextField="@((item) => item.Name)" ValueField="@((item) => item.Id.ToString())"
+                     TType="string" Label="Adding a Label" />
+    <CodeSnippet Language="HTML">
+&lt;BootstrapSelect TItem="Country"
+                 Data="@@countries"
+                 TextField="@@((item) => item.Name)"
+                 ValueField="@@((item) => item.Id.ToString())"
+                 TType="string"
+                 Label="Adding a Label"/&gt;
+    </CodeSnippet>
+}
+@code {
+    private IList<Country> countries;
+
+    protected override async Task OnInitializedAsync()
+    {
+        countries = await Http.GetFromJsonAsync<List<Country>>("sample-data/countries.json");
+    }
+}

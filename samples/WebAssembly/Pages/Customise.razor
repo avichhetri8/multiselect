@@ -1,0 +1,26 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<h1>Blzr.BootstrapSelect</h1>
+
+@if (countries == null)
+{
+<div class="triple-spinner">
+</div>
+}
+else
+{
+
+
+    <BootstrapSelect Id="selected-text-format-count" SelectedTextFormat="SelectedTextFormats.Count" TItem="Country" Data="@countries"
+                     TextField="@((item) => item.Name)" ValueField="@((item) => item.Id.ToString())" IsMultiple="true" TType="IEnumerable<int>" Label="Count" />
+    
+  }
+@code {
+    private IList<Country> countries;
+
+    protected override async Task OnInitializedAsync()
+    {
+        countries = await Http.GetFromJsonAsync<List<Country>>("sample-data/countries.json");
+    }
+}

@@ -1,0 +1,74 @@
+﻿@typeparam TItem
+@typeparam TType
+
+@if (isActive)
+{
+    <div class="overlay" @onclick="ToggleDropDown"></div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Label))
+{
+    <label class="form-control-label" id="@Id-label">@Label</label>
+}
+ 
+<div id="@Id" class="dropdown bootstrap-select @(IsMultiple ? "bootstrap-multi-select" : "") show-tick @CssClass" style="@(!string.IsNullOrEmpty(Width) ? $"width: {Width};" : "")">
+    <button type="button" class="btn @ButtonClass dropdown-toggle @FieldCssClasses" role="combobox" title="@ButtonText" @onclick="ToggleDropDown" data-toggle="dropdown" aria-owns="@innerId" aria-haspopup="listbox" aria-expanded="@isActive">
+        <div class="filter-option">
+            <div class="filter-option-inner">
+                <div class="filter-option-inner-inner">
+                    @ButtonText
+                </div>
+            </div>
+        </div>
+    </button>
+    <div class="dropdown-menu @(isActive? "show" : "")" role="combobox" tabindex="-1">
+        <div class="inner show" role="listbox" tabindex="-1" id="@innerId" @attributes="ConditionalAriaAttributes">
+            <ul class="dropdown-menu inner show">
+                @{ var currentOptGroup = ""; var firstTime = true; }
+                @foreach (var item in FilteredOptions)
+                {
+                    if (ShowOptGroups && item.OptGroup != currentOptGroup)
+                    {
+                        if (!firstTime)
+                        { 
+                            <li class="dropdown-divider"></li>
+                        }
+                        <li class="dropdown-header">
+                            <span class="text">@item.OptGroup</span>
+                        </li>
+                        currentOptGroup = item.OptGroup;
+                        firstTime = false;
+                    }
+                    <li>
+                        <a id="@item.Id" role="option" class="dropdown-item @(!IsMultiple && item.Selected ? "active" : "")" aria-disabled="false" tabindex="0" aria-selected="@item.Selected" @onclick="@(() => HandleOptionClick(item))">
+                            @if (IsMultiple || ShowTick.Value)
+                            {
+                                <span class="fa bs-ok-default check-mark"></span>
+                            }
+                           
+                            <input type="checkbox" @bind="item.Selected" />
+                            <span class="text">@item.Text</span>
+                        </a>
+                    </li>
+                }
+
+                @if (!string.IsNullOrEmpty(searchTerm) && !FilteredOptions.Any())
+                {
+                    <li class="no-results">@Defaults.SearchNotFoundText</li>
+                }
+
+            </ul>
+        </div>
+        @if (showMaxSelectedMessage)
+        {
+            <div class="notify">
+                <div>@string.Format(Defaults.MaxSelectionsText, MaxSelections)</div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (ValidationFor != null)
+{
+    <ValidationMessage For="@ValidationFor" />
+}
